@@ -1,0 +1,7 @@
+welcome:
+  des: New approach YAML db config
+databaseProperties:
+  dbUrl: jdbc:mysql://192.168.56.1:3310/classicmodels
+  dbPw: root
+  dbUser: root
+  dbDriver: org.mariadb.jdbc.Driver
