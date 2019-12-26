@@ -21,40 +21,32 @@ public class ProcessPhoto {
     private static final String folderPathOutput = "classicmodels/customer/profile-photo/";
     private static int maxImgSize = 10_000;
 
-    public static String saveImg(InputStream servletInputStream, String photoNameInput) {
+    public static String saveImg(InputStream servletInputStream, String photoNameInput) throws IOException, NoSuchAlgorithmException {
 
         String tempFileName = UUID.randomUUID().toString();
         String fileExtension = "." + FilenameUtils.getExtension(photoNameInput);
-        InputStream inputStream =null;
+        InputStream inputStream = null;
         OutputStream outputStream = null;
-        try {
+        String savingPath = diskNameOutput + folderPathOutput;
+        String originalFilePath = savingPath + tempFileName;
 
-            String savingPath = diskNameOutput + folderPathOutput;
-            String originalFilePath = savingPath + tempFileName;
+        inputStream = servletInputStream;
+        outputStream = new FileOutputStream(originalFilePath + fileExtension);
+        inputStream.transferTo(outputStream);
 
+        inputStream.close();
+        outputStream.close();
 
-            inputStream = servletInputStream;
-            outputStream = new FileOutputStream(originalFilePath + fileExtension);
-            inputStream.transferTo(outputStream);
+        String md5FromFile = genMD5FromFile(originalFilePath + fileExtension);
 
-            inputStream.close();
-            outputStream.close();
+        File originFile = new File(originalFilePath + fileExtension);
+        File fileRenamed = new File(savingPath + md5FromFile + fileExtension);
+        if (!fileRenamed.exists())
+            originFile.renameTo(fileRenamed);
+        else
+            originFile.delete();
 
-            String md5FromFile = genMD5FromFile(originalFilePath + fileExtension);
-
-            File originFile = new File(originalFilePath + fileExtension);
-            File fileRenamed = new File(savingPath + md5FromFile + fileExtension);
-            fileRenamed.createNewFile();
-            boolean renameSuccess = originFile.renameTo(fileRenamed);
-            if (renameSuccess) {
-                return md5FromFile;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-
-        }
-        return tempFileName + fileExtension;
+        return md5FromFile + fileExtension;
     }
 
     public static String genMD5FromFile(String tempFileName)
@@ -88,15 +80,15 @@ public class ProcessPhoto {
         byte[] result = null;
         String fileLocation = diskNameOutput + folderPathOutput + photoName;
         File f = new File(fileLocation);
-        result = new byte[(int)f.length()];
+        result = new byte[(int) f.length()];
         FileInputStream in = null;
         try {
             in = new FileInputStream(fileLocation);
             in.read(result);
-        }catch(Exception ex) {
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
-        }finally {
-            if(in != null)
+        } finally {
+            if (in != null)
                 in.close();
         }
         return result;

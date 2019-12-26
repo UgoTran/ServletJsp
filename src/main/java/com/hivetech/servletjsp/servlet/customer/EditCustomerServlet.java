@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @WebServlet("/customer/edit")
@@ -29,12 +31,15 @@ public class EditCustomerServlet extends HttpServlet {
         customerService = new CustomerServiceImpl();
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        editCustomer(request, response);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            editCustomer(request, response);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+        }
     }
 
-    private void editCustomer(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    private void editCustomer(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, NoSuchAlgorithmException {
         int customerNumber = Integer.valueOf(request.getParameter("customerNumber"));
         String customerName = request.getParameter("customerName");
         String contactLastName = request.getParameter("contactLastName");

@@ -30,20 +30,11 @@ public class InfoCustomerServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("customerNumber"));
         Customer selectedCustomer = customerService.getCustomerById(id);
 
-        //show img
-        String path = request.getContextPath();
-        String basePath = String.format("%s://%s:%s%s/",
-                request.getScheme(), request.getServerName(), request.getServerPort(), path);
-        request.setAttribute("basePath", basePath);
-
-        OutputStream os = response.getOutputStream();
-        File imgFile = new File("D:/pic1.png");
-        FileInputStream fis = new FileInputStream(imgFile);
-        byte[] binaryImgValues = readStream(fis);
-        os.write(binaryImgValues);
-        os.flush();
-        os.close();
-        //
+        String photoPath = String.format("%s://%s:%s/show/profilephoto/",
+                request.getScheme(),
+                request.getServerName(),
+                String.valueOf(request.getServerPort()));
+        request.setAttribute("photoPath", photoPath);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/views/_customerInfo.jsp");
         request.setAttribute("selectedCustomer", selectedCustomer);
         dispatcher.forward(request, response);

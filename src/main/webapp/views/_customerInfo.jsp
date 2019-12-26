@@ -31,10 +31,27 @@
         <tr>
             <td>
                 <div style="border: 1px solid deeppink; width: 11.2rem; height: 11.2rem;">
-                    <img src="${basePath}pic1.png"
-                         id="photoOutput"
-                         alt="${selectedCustomer.customerName} profile photo"
-                         height="175" width="178">
+                    <c:choose>
+                        <%--                        exist > show customer photo in disk--%>
+                        <c:when test="${selectedCustomer.profilePhotoName != null}">
+                            <span style="display: none"><c:out value="${selectedCustomer.profilePhotoName}"/></span>
+                            <%--                             concat:photoPath & selectedCustomer.profilePhotoName--%>
+                            <%--                            result: src= http://localhost:8080/show/profilephoto/e45fa138-3c9d-43f1-a661-8ebe3327343c.jpg
+                                                            photoPath: http://localhost:8080/show/profilephoto/
+                                                            ust.profilePhotoName: e45fa138-3c9d-43f1-a661-8ebe3327343c.jpg
+                            --%>
+                            <img src="${photoPath}${selectedCustomer.profilePhotoName}"
+                                 id="photoOutput"
+                                 alt="${selectedCustomer.customerName} profile photo">
+                        </c:when>
+                        <%--                        not exist > show default photo in webapp--%>
+                        <c:otherwise>
+                            <span style="display: none"><c:out value="02-default.jpg"/></span>
+                            <img src="/assets/image/02-default.jpg"
+                                 id="photoOutput"
+                                 alt="${selectedCustomer.customerName} profile photo">
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <input type="submit" value="Upload Profile Photo"/>
             </td>
